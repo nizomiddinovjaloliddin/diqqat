@@ -1,0 +1,192 @@
+ <!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diqqat — fokus va ish unumdorligi sayti</title>
+<style>
+@property --t{syntax:'<integer>';inherits:true;initial-value:1500}
+:root{--bg:#f6f4ef;--card:#fff;--ink:#1d2a2a;--mut:#6b7777;--acc:#0f766e;--acc2:#e8f3f1;--line:#e3e0d8;--btn-ink:#fff}
+@media (prefers-color-scheme:dark){:root{--bg:#101818;--card:#1a2525;--ink:#eaf2f1;--mut:#8fa3a1;--acc:#2dd4bf;--acc2:#16312e;--line:#2c3b3b;--btn-ink:#06201d}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.6}
+.hid{position:absolute;opacity:0;pointer-events:none}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1100px;margin:0 auto;padding:0 20px}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
+.logo{font-weight:800;font-size:1.2rem}
+nav ul{display:flex;gap:22px;list-style:none;margin:0;padding:0}
+nav ul a{color:var(--mut);font-weight:500}
+nav ul a:hover{color:var(--acc)}
+@media(max-width:640px){nav ul{gap:12px;font-size:.85rem}}
+
+/* HERO */
+.hero{padding:72px 0 48px;text-align:center}
+.hero h1{font-size:clamp(2.2rem,6vw,4rem);line-height:1.1;margin:0 0 16px;letter-spacing:-.02em}
+.hero h1 span{color:var(--acc)}
+.hero p{max-width:620px;margin:0 auto 28px;color:var(--mut);font-size:1.15rem}
+.cta{display:inline-block;background:var(--acc);color:var(--btn-ink);padding:14px 30px;border-radius:14px;font-weight:700}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:48px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px}
+.stat b{display:block;font-size:2rem;color:var(--acc)}
+.stat small{color:var(--mut)}
+@media(max-width:640px){.stats{grid-template-columns:1fr}}
+
+section{padding:56px 0}
+h2.title{font-size:clamp(1.6rem,4vw,2.2rem);margin:0 0 8px}
+.lead{color:var(--mut);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:28px}
+h3{margin:0 0 14px;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
+
+/* TIMER */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media(max-width:820px){.grid2{grid-template-columns:1fr}}
+.modes{display:flex;gap:8px;justify-content:center;margin-bottom:22px}
+.modes label{padding:8px 18px;border-radius:999px;border:1px solid var(--line);cursor:pointer;font-weight:600;color:var(--mut)}
+#m15:checked ~ main label[for=m15],#m25:checked ~ main label[for=m25],#m50:checked ~ main label[for=m50]{background:var(--acc);color:var(--btn-ink);border-color:var(--acc)}
+.timer{display:grid;place-items:center;--total:1500;animation:tick25 1500s steps(1500,end) forwards paused}
+#m15:checked ~ main .timer{--total:900;animation-name:tick15;animation-duration:900s;animation-timing-function:steps(900,end)}
+#m50:checked ~ main .timer{--total:3000;animation-name:tick50;animation-duration:3000s;animation-timing-function:steps(3000,end)}
+#go:checked ~ main .timer{animation-play-state:running}
+@keyframes tick15{from{--t:900}to{--t:0}}
+@keyframes tick25{from{--t:1500}to{--t:0}}
+@keyframes tick50{from{--t:3000}to{--t:0}}
+.timer{--t:1500}
+#m15:checked ~ main .timer{--t:900}
+#m50:checked ~ main .timer{--t:3000}
+.ring{width:min(300px,70vw);aspect-ratio:1;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--acc) calc((var(--total) - var(--t)) / var(--total) * 360deg),var(--line) 0)}
+.ring div{width:calc(100% - 28px);aspect-ratio:1;border-radius:50%;background:var(--card);display:grid;place-items:center;counter-reset:m round(down,calc(var(--t)/60),1) s mod(var(--t),60);font-size:clamp(2.6rem,9vw,4rem);font-weight:800;font-variant-numeric:tabular-nums}
+/* .[ 07.10.2026 17:47] Jaloliddin: ring div::after{content:counter(m,decimal-leading-zero) ":" counter(s,decimal-leading-zero)} */
+.btn{display:block;width:100%;max-width:300px;margin:22px auto 0;padding:15px;border-radius:14px;background:var(--acc);color:var(--btn-ink);font-weight:700;text-align:center;cursor:pointer}
+.btn::after{content:"▶ Boshlash"}
+#go:checked ~ main .btn::after{content:"↺ Qayta boshlash"}
+.hint{text-align:center;color:var(--mut);font-size:.9rem;margin:12px 0 0}
+
+/* TASKS */
+.task{display:flex;gap:14px;align-items:center;padding:12px 0;border-top:1px solid var(--line);cursor:pointer}
+.task:first-of-type{border-top:0}
+.task input[type=checkbox]{width:24px;height:24px;accent-color:var(--acc);flex:none}
+.task input[type=text]{flex:1;border:0;background:transparent;color:var(--ink);font:inherit;font-size:1.05rem;padding:4px 0;outline:0}
+.task input[type=text]::placeholder{color:var(--mut)}
+.task:has(input:checked) input[type=text]{text-decoration:line-through;opacity:.5}
+.bar{display:flex;gap:6px;margin-top:18px}
+.bar i{flex:1;height:10px;border-radius:10px;background:var(--line);transition:background .3s}
+.tasks:has(.task:nth-of-type(1) :checked) .bar i:nth-child(1),
+.tasks:has(.task:nth-of-type(2) :checked) .bar i:nth-child(2),
+.tasks:has(.task:nth-of-type(3) :checked) .bar i:nth-child(3),
+.tasks:has(.task:nth-of-type(4) :checked) .bar i:nth-child(4),
+.tasks:has(.task:nth-of-type(5) :checked) .bar i:nth-child(5){background:var(--acc)}
+.done{display:none;color:var(--acc);font-weight:700;margin:14px 0 0}
+.tasks:has(.task:nth-of-type(1) :checked):has(.task:nth-of-type(2) :checked):has(.task:nth-of-type(3) :checked):has(.task:nth-of-type(4) :checked):has(.task:nth-of-type(5) :checked) .done{display:block}
+
+/* TIPS */
+.tips{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+@media(max-width:820px){.tips{grid-template-columns:1fr}}
+.tip .ic{width:48px;height:48px;border-radius:14px;background:var(--acc2);display:grid;place-items:center;font-size:1.5rem;margin-bottom:14px}
+.tip h4{margin:0 0 6px;font-size:1.1rem}
+.tip p{margin:0;color:var(--mut)}
+
+/* HABITS */
+.habits{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(max-width:640px){.habits{grid-template-columns:1fr}}
+.habit{display:flex;gap:12px;align-items:center;padding:14px 16px;border:1px solid var(--line);border-radius:14px;cursor:pointer;background:var(--card)}
+.habit input{accent-color:var(--acc);width:20px;height:20px}
+.habit:has(input:checked){background:var(--acc2);border-color:var(--acc)}
+
+/* FAQ */
+details{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 22px;margin-bottom:12px}
+summary{cursor:pointer;font-weight:600}
+details p{color:var(--mut);margin:12px 0 0}
+
+footer{border-top:1px solid var(--line);padding:32px 0;text-align:center;color:var(--mut)}
+</style>
+</head>
+<body>
+<input class="hid" type="radio" name="m" id="m15">
+<input class="hid" type="radio" name="m" id="m25" checked>
+<input class="hid" type="radio" name="m" id="m50">
+<input class="hid" type="checkbox" id="go">
+
+<nav><div class="wrap">
+<a class="logo" href="#top">🎯 Diqqat</a>
+<ul><li><a href="#taymer">Taymer</a></li><li><a href="#vazifa">Vazifalar</a></li><li><a href="#maslahat">Maslahat</a></li><li><a href="#savol">Savollar</a></li></ul>
+</div></nav>
+
+<main id="top">
+<header class="hero"><div class="wrap">
+<h1>Chalg'ishni to'xtating, <span>asosiy ishni</span> bajaring</h1>
+<p>Diqqat — fokus taymer, kunlik 5 ta vazifa va odatlar ro'yxati bir joyda. Hech qanday ro'yxatdan o'tish kerak emas.</p>
+<a class="cta" href="#taymer">Hozir boshlash</a>
+<div class="stats">
+<div class="stat"><b>25 daq</b><small>chuqur ish seansi</small></div>
+<div class="stat"><b>5 ta</b><small>kunlik asosiy vazifa</small></div>
+<div class="stat"><b>0 ta</b><small>reklama va ro'yxatdan o'tish</small></div>
+</div>
+</div></header>
+
+<section id="taymer"><div class="wrap">
+<h2 class="title">Fokus taymer</h2>
+<p class="lead">Rejimni tanlang, "Boshlash"ni bosing va faqat bitta ish bilan shug'ullaning.</p>
+<div class="card">
+[07.10.2026 17:47] Jaloliddin: <div class="modes"><label for="m15">15 daq</label><label for="m25">25 daq</label><label for="m50">50 daq</label></div>
+<div class="timer"><div class="ring"><div></div></div></div>
+<label class="btn" for="go"></label>
+<p class="hint">Rejimni almashtirish uchun avval "Qayta boshlash"ni bosing.</p>
+</div>
+</div></section>
+
+<section id="vazifa"><div class="wrap">
+<h2 class="title">Bugungi reja</h2>
+<p class="lead">5 tadan ortiq vazifa qo'ymang. Eng muhimini birinchi yozing.</p>
+<div class="grid2">
+<div class="card tasks">
+<h3>Asosiy vazifalar</h3>
+<label class="task"><input type="checkbox"><input type="text" placeholder="1-vazifa (eng muhimi)..."></label>
+<label class="task"><input type="checkbox"><input type="text" placeholder="2-vazifa..."></label>
+<label class="task"><input type="checkbox"><input type="text" placeholder="3-vazifa..."></label>
+<label class="task"><input type="checkbox"><input type="text" placeholder="4-vazifa..."></label>
+<label class="task"><input type="checkbox"><input type="text" placeholder="5-vazifa..."></label>
+<div class="bar"><i></i><i></i><i></i><i></i><i></i></div>
+<p class="done">🎉 Barakalla! Bugungi rejani to'liq bajardingiz.</p>
+</div>
+<div class="card">
+<h3>Kunlik odatlar</h3>
+<div class="habits">
+<label class="habit"><input type="checkbox">💧 2 litr suv</label>
+<label class="habit"><input type="checkbox">🚶 20 daqiqa yurish</label>
+<label class="habit"><input type="checkbox">📵 Telefonsiz ertalab</label>
+<label class="habit"><input type="checkbox">📖 10 bet kitob</label>
+<label class="habit"><input type="checkbox">😴 23:00 gacha uxlash</label>
+<label class="habit"><input type="checkbox">🧘 5 daqiqa tinchlik</label>
+</div>
+</div>
+</div>
+</div></section>
+
+<section id="maslahat"><div class="wrap">
+<h2 class="title">Diqqatni saqlash bo'yicha maslahatlar</h2>
+<p class="lead">Kichik o'zgarishlar katta natija beradi.</p>
+<div class="tips">
+<div class="card tip"><div class="ic">📵</div><h4>Bildirishnomalarni o'chiring</h4><p>Har bir signal diqqatni buzadi. Ish vaqtida telefonni boshqa xonaga qo'ying.</p></div>
+<div class="card tip"><div class="ic">🐸</div><h4>Eng qiyinini birinchi qiling</h4><p>Ertalab miya yangi bo'ladi. Qiyin vazifani kunning boshiga qo'ying.</p></div>
+<div class="card tip"><div class="ic">⏱️</div><h4>Dam olishni unutmang</h4><p>Har seansdan keyin 5 daqiqa tanaffus. 4 seansdan so'ng 20 daqiqa dam oling.</p></div>
+</div>
+</div></section>
+
+<section id="savol"><div class="wrap">
+<h2 class="title">Ko'p so'raladigan savollar</h2>
+<p class="lead">&nbsp;</p>
+<details><summary>Pomodoro usuli nima?</summary><p>25 daqiqa to'liq diqqat bilan ishlash, keyin 5 daqiqa dam olishdan iborat vaqtni boshqarish usuli.</p></details>
+<details><summary>Nega faqat 5 ta vazifa?</summary><p>Ko'p vazifa miyani ortiqcha yuklaydi. Kam, lekin aniq reja bajarilish ehtimolini oshiradi.</p></details>
+<details><summary>Ma'lumotlarim saqlanadimi?</summary><p>Yo'q. Sayt faqat HTML va CSS'da yozilgan, sahifa yangilansa belgilar va matnlar o'chadi.</p></details>
+<details><summary>Taymer ishlamayapti?</summary><p>Zamonaviy brauzer (Chrome, Safari, Edge so'nggi versiyasi) kerak. Eski brauzerlarda aylana harakatlanmasligi mumkin.</p></details>
+</div></section>
+</main>
+
+<footer><div class="wrap">🎯 Diqqat · Faqat HTML va CSS bilan yaratilgan</div></footer>
+</body>
+</html>
